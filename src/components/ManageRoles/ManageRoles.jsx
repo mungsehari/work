@@ -5,7 +5,19 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 
-import { Button, DatePicker, Radio, Select, Table } from "antd";
+import {
+  Button,
+  DatePicker,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Space,
+  Table,
+} from "antd";
+
+import { useState } from "react";
+import Notifications from "../Notifications/Notifications";
 
 const provinceData = ["Zhejiang", "Jiangsu"];
 const dataSource = [
@@ -116,10 +128,21 @@ const columns = [
 ];
 
 const ManageRoles = () => {
+  const [open, setOpen] = useState(false);
+  const [placement, setPlacement] = useState("right");
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onChange = (e) => {
+    setPlacement(e.target.value);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
   return (
     <div className="min-h-screen flex items-center justify-center  bg-gray-100">
       <div className="w-full max-w-4xl p-6 bg-white rounded shadow-md justify-between">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4  ">
+        <div className="flex items-center justify-between">
           <div>
             <Select
               showSearch
@@ -164,10 +187,71 @@ const ManageRoles = () => {
               ]}
             />
           </div>
-          <Button icon={<PlusOutlined />} type="primary" className=" w-fit">
+
+          <Button
+            icon={<PlusOutlined />}
+            type="primary"
+            className=" w-fit"
+            onClick={showDrawer}
+          >
             Create Role
           </Button>
+          <Drawer
+            title="Create Role"
+            placement={placement}
+            width={700}
+            onClose={onClose}
+            open={open}
+            extra={
+              <Space>
+                <Button onClick={onClose}>Delete</Button>
+                <Button type="primary" onClick={onClose}>
+                  Save
+                </Button>
+              </Space>
+            }
+          >
+            <Form layout="vertical">
+              <Form.Item
+                label="Full name"
+                name="Full Name"
+                rules={[{ required: true, message: "Tax Info is required!" }]}
+                className="col-span-1 lg:col-span-1"
+              >
+                <Input placeholder="full name" showCount maxLength={120} />
+              </Form.Item>
+              <Form.Item
+                label="Description"
+                name="description"
+                rules={[
+                  { required: true, message: "Description Info is required!" },
+                ]}
+              >
+                <Input.TextArea
+                  placeholder="What's this role about?"
+                  style={{
+                    height: 120,
+                    resize: "none",
+                  }}
+                />
+              </Form.Item>
+              <Select
+                defaultValue="Full"
+                style={{
+                  width: 120,
+                }}
+                options={[
+                  {
+                    value: "Full",
+                    label: "Full",
+                  },
+                ]}
+              />
+              <Notifications />
+            </Form>
+          </Drawer>
         </div>
+
         <div className="pt-3">
           <Table bordered dataSource={dataSource} columns={columns} />
         </div>
